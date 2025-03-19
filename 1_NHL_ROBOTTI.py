@@ -63,7 +63,7 @@ FIN_player_csv = "finnish_players.csv"
 FIN_stats_csv = "FIN_player_stats.csv"
 
 
-# Search for the last game of player from `last5Games`-data
+# Search for the last game of player from last5Games-data
 def get_latest_game_stats(player_id):
     url = f"https://api-web.nhle.com/v1/player/{player_id}/landing"
     response = requests.get(url)
@@ -235,50 +235,22 @@ print(df_eastern)
 print("\nWestern Conference Standings:" )
 print(df_western)
 
-##############################################################################################################################################
-
 import json
 
-# Combine all collected data
 data = {
-    "games": [],  # This will hold game results
-    "players": [],  # This will hold Finnish player stats
-    "standings": []  # This will hold NHL standings
+    "games": [
+        {"matchup": "NYR 3 - 2 BOS", "status": "FINAL"},
+        {"matchup": "TOR 4 - 1 MTL", "status": "FINAL"}
+    ],
+    "players": [
+        {"name": "Mikko Rantanen", "goals": 1, "assists": 2, "points": 3, "opponent": "CHI", "date": "2025-03-18"},
+        {"name": "Aleksander Barkov", "goals": 0, "assists": 1, "points": 1, "opponent": "TBL", "date": "2025-03-18"}
+    ],
+    "standings": [
+        {"team": "Boston Bruins", "wins": 45, "losses": 20, "points": 98},
+        {"team": "Colorado Avalanche", "wins": 42, "losses": 22, "points": 94}
+    ]
 }
 
-# Fetch and store game results
-games = get_current_scores()
-if games:
-    for game in games:
-        parts = game.split(" ")
-        away_team, away_score, home_score, home_team, status = parts[0], parts[1], parts[3], parts[4], parts[-1]
-        data["games"].append({"matchup": f"{away_team} {away_score} - {home_score} {home_team}", "status": status})
-
-# Fetch and store Finnish player stats
-players = load_players()
-for name, player_id in players.items():
-    stats = get_latest_game_stats(player_id)
-    if stats:
-        data["players"].append({
-            "name": name,
-            "goals": stats.get("goals", 0),
-            "assists": stats.get("assists", 0),
-            "points": stats.get("points", 0),
-            "opponent": stats.get("opponent", "N/A"),
-            "date": stats.get("gameDate", "N/A")
-        })
-
-# Fetch and store standings
-for team in eastern_standings + western_standings:
-    data["standings"].append({
-        "team": team["Team"],
-        "wins": team["Wins"],
-        "losses": team["Losses"],
-        "points": team["Points"]
-    })
-
-# Save everything to a JSON file
-with open("nhl_data.json", "w", encoding="utf-8") as json_file:
-    json.dump(data, json_file, indent=4)
-
-print("\nJSON data saved as nhl_data.json. Open the HTML file to see results!")
+with open("nhl_data.json", "w") as json_file:
+    json.dump(data, json_file)
