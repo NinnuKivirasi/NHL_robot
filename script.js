@@ -12,6 +12,15 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     loadData(gameResults, playerStats, easternStandings, westernStandings);
+
+    // MutationObserver to replace DOMSubtreeModified
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            console.log(mutation);
+        });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
 });
 
 async function loadData(gameResults, playerStats, easternStandings, westernStandings) {
