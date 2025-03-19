@@ -1,0 +1,28 @@
+body { 
+    font-family: Arial, sans-serif; 
+    background-color: #f4f4f4; 
+    margin: 0; 
+    padding: 20px; }
+
+.container {
+     max-width: 800px; 
+     margin: auto; 
+     background: white; 
+     padding: 20px; 
+     order-radius: 10px; 
+     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+h2 { 
+    text-align: center; 
+    color: #333; }
+.section {
+    margin-bottom: 20px; }
+table { 
+    width: 100%; 
+    border-collapse: collapse; }
+th, td { 
+    padding: 10px; 
+    text-align: left; 
+    border-bottom: 1px solid #ddd; }
+th { 
+    background: #007bff; 
+    color: white; }

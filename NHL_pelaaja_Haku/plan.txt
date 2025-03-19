@@ -1,0 +1,20 @@
+How the robot should work:
+    Start and find selected statics
+        Go to place you find statics
+            search results of NHL games
+                save all game results that has been played past 24 hours on SQL
+                save standing table than it is after this round on SQL
+            search seleted players (from list included[finnish players listed])
+                open file
+                check players
+                save selected players statics on SQL
+
+    Save all results and statics, make readable file of it and send it to user
+            great html file (or pdf etc) from the results
+            send it to email (etc)
+                
+HTML file
+    table of the results of the games
+    table of the statics of finnish players
+    table of the standing
+    (recent news of finnish players[movings, first game in NHL etc])
