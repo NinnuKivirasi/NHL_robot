@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    loadData();
+    loadData(gameResults, playerStats, easternStandings, westernStandings);
 });
 
-async function loadData() {
+async function loadData(gameResults, playerStats, easternStandings, westernStandings) {
     try {
         const response = await fetch('nhl_data.json'); // Ensure this file exists in GitHub
         if (!response.ok) throw new Error('Failed to load JSON');
