@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NHL Stats</title>
-    <link rel="stylesheet" href="styles.css"> <!-- If you want to style it -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -12,18 +12,60 @@
 
     <!-- Section for Game Results -->
     <h2>Game Results from Last Round</h2>
-    <div id="game-results"></div>
+    <table id="game-results">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Goals</th>
+                <th>Assists</th>
+                <th>Points</th>
+                <th>Opponent</th>
+            </tr>
+        </thead>
+        <tbody id="game-results"></tbody>
+    </table>
 
     <!-- Section for Finnish Players Stats -->
     <h2>Finnish Players Stats from Last Round</h2>
-    <div id="player-stats"></div>
+    <table id="player-stats-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Goals</th>
+                <th>Assists</th>
+                <th>Points</th>
+                <th>Opponent</th>
+            </tr>
+        </thead>
+        <tbody id="player-stats"></tbody>
+    </table>
 
     <!-- Section for Standings -->
     <h2>Eastern Conference Standings</h2>
-    <div id="eastern-standings"></div>
+    <table id="eastern-standings">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody id="eastern-standings"></tbody>
+    </table>
 
     <h2>Western Conference Standings</h2>
-    <div id="western-standings"></div>
+    <table id="western-standings">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody id="western-standings"></tbody>
+    </table>
 
     <script src="script.js"></script>
 </body>
