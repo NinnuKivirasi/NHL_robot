@@ -1,19 +1,31 @@
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("Script is running!"); // Debugging
+
+    const gameResults = document.getElementById('game-results');
+    const playerStats = document.getElementById('player-stats');
+    const easternStandings = document.getElementById('eastern-standings');
+    const westernStandings = document.getElementById('western-standings');
+
+    if (!gameResults || !playerStats || !easternStandings || !westernStandings) {
+        console.error("One or more elements are missing from the HTML.");
+        return;
+    }
+
+    loadData();
+});
+
 async function loadData() {
     try {
-        const response = await fetch('nhl_data.json');  // Make sure this JSON file exists in your GitHub repo
-        if (!response.ok) {
-            throw new Error('Failed to load JSON');
-        }
+        const response = await fetch('nhl_data.json'); // Ensure this file exists in GitHub
+        if (!response.ok) throw new Error('Failed to load JSON');
+
         const data = await response.json();
-        console.log(data); // Debugging: check if data is loaded
+        console.log("Data loaded:", data); // Debugging
 
-        // Display game results
-        const gameResults = document.getElementById('game-results');
         gameResults.innerHTML = data.games.map(game => 
-            `<p>${game.matchup} (${game.status})</p>`).join('');
+            `<p>${game.matchup} (${game.status})</p>`
+        ).join('');
 
-        // Display Finnish player stats (only relevant ones)
-        const playerStats = document.getElementById('player-stats');
         playerStats.innerHTML = data.players
             .filter(player => 
                 (player.position !== 'G' && (player.goals > 0 || player.assists > 0 || player.points > 0)) || 
@@ -26,23 +38,13 @@ async function loadData() {
             )
             .join('');
 
-        // Display standings (grouped by conferences)
-        const easternStandings = document.getElementById('eastern-standings');
-        const westernStandings = document.getElementById('western-standings');
+        easternStandings.innerHTML = data.standings.filter(team => team.conference === 'Eastern')
+            .map(team => `<p>${team.team}: ${team.wins}W - ${team.losses}L, ${team.points}PTS</p>`).join('');
 
-        const easternTeams = data.standings.filter(team => team.conference === 'Eastern');
-        const westernTeams = data.standings.filter(team => team.conference === 'Western');
-
-        easternStandings.innerHTML = easternTeams.map(team =>
-            `<p>${team.team}: ${team.wins}W - ${team.losses}L, ${team.points}PTS</p>`).join('');
-
-        westernStandings.innerHTML = westernTeams.map(team =>
-            `<p>${team.team}: ${team.wins}W - ${team.losses}L, ${team.points}PTS</p>`).join('');
+        westernStandings.innerHTML = data.standings.filter(team => team.conference === 'Western')
+            .map(team => `<p>${team.team}: ${team.wins}W - ${team.losses}L, ${team.points}PTS</p>`).join('');
 
     } catch (error) {
         console.error("Error loading data:", error);
     }
 }
-
-// Load data when the page is loaded
-document.addEventListener("DOMContentLoaded", loadData);

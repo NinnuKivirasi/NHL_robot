@@ -3,35 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>NHL Stats Dashboard</title>
-
+    <title>NHL Stats</title>
+    <link rel="stylesheet" href="styles.css"> <!-- If you want to style it -->
 </head>
 <body>
-    <div class="container">
-        <h2>NHL Stats Dashboard</h2>
-        
-        <div class="section">
-            <h3>Game Results from Last Round</h3>
-            <table id="gameResults">
-                <tr><th>Matchup</th><th>Status</th></tr>
-            </table>
-        </div>
-        
-        <div class="section">
-            <h3>Finnish Players' Stats from Last Round</h3>
-            <table id="playerStats">
-                <tr><th>Name</th><th>Goals</th><th>Assists</th><th>Points</th><th>Opponent</th><th>Date</th></tr>
-            </table>
-        </div>
-        
-        <div class="section">
-            <h3>Current NHL Standings</h3>
-            <table id="standings">
-                <tr><th>Team</th><th>Wins</th><th>Losses</th><th>Points</th></tr>
-            </table>
-        </div>
-    </div>
+
+    <h1>NHL Latest Results</h1>
+
+    <!-- Section for Game Results -->
+    <h2>Game Results from Last Round</h2>
+    <div id="game-results"></div>
+
+    <!-- Section for Finnish Players Stats -->
+    <h2>Finnish Players Stats from Last Round</h2>
+    <div id="player-stats"></div>
+
+    <!-- Section for Standings -->
+    <h2>Eastern Conference Standings</h2>
+    <div id="eastern-standings"></div>
+
+    <h2>Western Conference Standings</h2>
+    <div id="western-standings"></div>
 
     <script src="script.js"></script>
 </body>
