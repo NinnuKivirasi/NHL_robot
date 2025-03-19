@@ -34,29 +34,53 @@
     </div>
 
     <script>
-        async function fetchData() {
-            const gameResults = document.getElementById('gameResults');
-            const playerStats = document.getElementById('playerStats');
-            const standings = document.getElementById('standings');
-            
-            const data = await fetch('nhl_data.json').then(res => res.json());
-            
-            data.games.forEach(game => {
-                let row = `<tr><td>${game.matchup}</td><td>${game.status}</td></tr>`;
-                gameResults.innerHTML += row;
-            });
-
-            data.players.forEach(player => {
-                let row = `<tr><td>${player.name}</td><td>${player.goals}</td><td>${player.assists}</td><td>${player.points}</td><td>${player.opponent}</td><td>${player.date}</td></tr>`;
-                playerStats.innerHTML += row;
-            });
-
-            data.standings.forEach(team => {
-                let row = `<tr><td>${team.team}</td><td>${team.wins}</td><td>${team.losses}</td><td>${team.points}</td></tr>`;
-                standings.innerHTML += row;
-            });
+        async function loadData() {
+    try {
+        const response = await fetch('nhl_data.json');
+        if (!response.ok) {
+            throw new Error('Failed to load JSON');
         }
-        fetchData();
+        const data = await response.json();
+        console.log(data); // Check if data is loading in the console
+
+        // Display game results
+        const gameResults = document.getElementById('game-results');
+        gameResults.innerHTML = data.games.map(game => 
+            `<p>${game.matchup} (${game.status})</p>`).join('');
+
+        // Display Finnish player stats (only relevant ones)
+        const playerStats = document.getElementById('player-stats');
+        playerStats.innerHTML = data.players
+            .filter(player => 
+                (player.position !== 'G' && (player.goals > 0 || player.assists > 0 || player.points > 0)) || 
+                (player.position === 'G' && player.saves !== null && player.shotsAgainst !== null)
+            )
+            .map(player => 
+                player.position === 'G' 
+                    ? `<p>${player.name} (G): ${player.saves} SV, ${player.shotsAgainst} SA vs ${player.opponent}</p>` 
+                    : `<p>${player.name}: ${player.goals}G, ${player.assists}A, ${player.points}P vs ${player.opponent}</p>`
+            )
+            .join('');
+
+        // Display standings (grouped by conferences)
+        const easternStandings = document.getElementById('eastern-standings');
+        const westernStandings = document.getElementById('western-standings');
+
+        const easternTeams = data.standings.filter(team => team.conference === 'Eastern');
+        const westernTeams = data.standings.filter(team => team.conference === 'Western');
+
+        easternStandings.innerHTML = easternTeams.map(team =>
+            `<p>${team.team}: ${team.wins}W - ${team.losses}L, ${team.points}PTS</p>`).join('');
+
+        westernStandings.innerHTML = westernTeams.map(team =>
+            `<p>${team.team}: ${team.wins}W - ${team.losses}L, ${team.points}PTS</p>`).join('');
+
+    } catch (error) {
+        console.error("Error loading data:", error);
+    }
+}
+
+loadData();
     </script>
 </body>
 </html>
