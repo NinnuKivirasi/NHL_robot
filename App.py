@@ -1,15 +1,19 @@
+from flask import Flask, render_template
+import pandas as pd
 import requests
 import csv
 import pandas as pd
+from flask import Flask, render_template
 from datetime import datetime, timedelta
 
-#FIRST PART
+#////////////////// FIRST PART
 
 # From start, files have to be empty
 open("FIN_player_stats.csv", "w").close()
 open("finnish_players.csv", "w").close()
 open("nhl_players_id.csv", "w").close()
 open("player_stats.csv", "w").close()
+open("standings_csv", "w").close()
 
 team_codes = []
 
@@ -54,9 +58,7 @@ finnish_players_file.close()
 
 print("Files are ready")
 
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#SECOND PART
+#////////////////// SECOND PART
 
 # CSV-Files
 FIN_player_csv = "finnish_players.csv"
@@ -129,7 +131,7 @@ def save_stats_to_csv(stats):
         writer.writerow(["name", "goals", "assists", "points", "saves", "shotsAgainst", "plusMinus", "time_on_ice", "game_date", "team", "opponent"])
         for stat in stats:
             writer.writerow(stat)
-
+            
 
 # Main
 def main():
@@ -147,110 +149,99 @@ def main():
             else:  # Field player
                 stat_row = (name, stats["goals"], stats["assists"], stats["points"], stats["plusMinus"], stats["timeOnIce"], stats["gameDate"], stats["team"], stats["opponent"])
             player_stats.append(stat_row)
+    
 
+            
     # Save stats to csv
     save_stats_to_csv(player_stats)
     print(f"Stats saved in {FIN_stats_csv} file.")
 
 
+
 if __name__ == "__main__":
     main()
 
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#////////////////// THIRD PART
 
+# CSV File
+STANDINGS_CSV = "standings.csv"
 
-#THIRD PART
+# NHL API URL
+STANDINGS_URL = "https://api-web.nhle.com/v1/standings/now"
 
-Score_URL = "https://api-web.nhle.com/v1/score/now"
-
-# Game results
-def get_current_scores():
-    response = requests.get(Score_URL)
+# Function to fetch and save standings, sorted by conference
+def fetch_standings():
+    response = requests.get(STANDINGS_URL)
     if response.status_code != 200:
-        print(f"Something went wrong! Status code: {response.status_code}")
-        return None
+        print(f"Error fetching standings! Status code: {response.status_code}")
+        return
 
     data = response.json()
 
-    if "games" not in data:
-        print("Error: 'games'-key is not found.")
-        return None
+    eastern_standings = []
+    western_standings = []
 
-    games = []
-    for game in data["games"]:
-        home_team = game["homeTeam"]["abbrev"]
-        away_team = game["awayTeam"]["abbrev"]
-        home_score = game["homeTeam"].get("score", 0)
-        away_score = game["awayTeam"].get("score", 0)
-        game_status = game.get("gameState", "N/A")  # LIVE, FINAL, PREVIEW
+    for team in data['standings']:
+        team_info = [
+            team['teamName']['default'],
+            team['goalFor'],
+            team['goalAgainst'],
+            team['wins'],
+            team['losses'],
+            team['ties'],
+            team['points'],
+            team['streakCode']
+        ]
 
-        games.append(f"{away_team} {away_score} - {home_score} {home_team} ({game_status})")
+        # Sort teams into Eastern & Western Conference lists
+        if team['conferenceName'] == "Eastern":
+            eastern_standings.append(team_info)
+        elif team['conferenceName'] == "Western":
+            western_standings.append(team_info)
 
-    return games
+    # Write to CSV file
+    with open(STANDINGS_CSV, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
 
-# Main
-def main():
-    print("\n Games from last round:")
-    games = get_current_scores()
-    if games:
-        for game in games:
-            print(game)
-    else:
-        print("No games played.")
+        # Write Eastern Conference standings
+        writer.writerow(["Eastern Conference"])
+        writer.writerow(["Team", "Goals For", "Goals Against", "Wins", "Losses", "Ties", "Points", "Streak"])
+        writer.writerows(eastern_standings)
+
+        writer.writerow([])  # Empty row for spacing
+
+        # Write Western Conference standings
+        writer.writerow(["Western Conference"])
+        writer.writerow(["Team", "Goals For", "Goals Against", "Wins", "Losses", "Ties", "Points", "Streak"])
+        writer.writerows(western_standings)
+
+    print("✅ Standings sorted by conference and saved to CSV.")
+
+# Run the function
+fetch_standings()
+
+
+#////////////////// FOURTH PART
+
+app = Flask(__name__)
+
+# Load CSV files into Pandas DataFrames
+def load_csv(file_path):
+    try:
+        return pd.read_csv(file_path)
+    except FileNotFoundError:
+        return pd.DataFrame()  # Return an empty DataFrame if file is missing
+
+@app.route("/")
+def home():
+    standings_df = load_csv("standings.csv")
+    scores_df = load_csv("game_scores.csv")
+    player_stats_df = load_csv("FIN_player_stats.csv")
+
+    return render_template("index.html", 
+                           standings_table=standings_df.to_html(classes="table table-striped table-bordered", index=False),
+                           scores_table=scores_df.to_html(classes="table table-striped table-bordered", index=False),
+                           player_stats_table=player_stats_df.to_html(classes="table table-striped table-bordered", index=False))
 
 if __name__ == "__main__":
-    main()
-print()
-# Hae sarjataulukon data API:sta
-response = requests.get("https://api-web.nhle.com/v1/standings/now")
-data = response.json()
-
-# Muodosta DataFrame
-eastern_standings = []
-western_standings = []
-
-for team_record in data['standings']:
-    team_info = {
-        'Team': team_record['teamName']['default'],
-        'Goals': team_record['goalFor'],
-        "Goal against": team_record['goalAgainst'],
-        'Wins': team_record['wins'],
-        'Losses': team_record['losses'],
-        'Ties': team_record['ties'],
-        'Points': team_record['points'],
-        'Streak': team_record['streakCode']
-    }
-    if team_record['conferenceName'] == 'Eastern':
-        eastern_standings.append(team_info)
-    elif team_record['conferenceName'] == 'Western':
-        western_standings.append(team_info)
-
-# Luo DataFrame
-df_eastern = pd.DataFrame(eastern_standings)
-df_western = pd.DataFrame(western_standings)
-
-# Näytä sarjataulukot
-print("Eastern Conference Standings:" )
-print(df_eastern)
-print("\nWestern Conference Standings:" )
-print(df_western)
-
-import json
-
-data = {
-    "games": [
-        {"matchup": "NYR 3 - 2 BOS", "status": "FINAL"},
-        {"matchup": "TOR 4 - 1 MTL", "status": "FINAL"}
-    ],
-    "players": [
-        {"name": "Mikko Rantanen", "goals": 1, "assists": 2, "points": 3, "opponent": "CHI", "date": "2025-03-18"},
-        {"name": "Aleksander Barkov", "goals": 0, "assists": 1, "points": 1, "opponent": "TBL", "date": "2025-03-18"}
-    ],
-    "standings": [
-        {"team": "Boston Bruins", "wins": 45, "losses": 20, "points": 98},
-        {"team": "Colorado Avalanche", "wins": 42, "losses": 22, "points": 94}
-    ]
-}
-
-with open("nhl_data.json", "w") as json_file:
-    json.dump(data, json_file)
+    app.run(debug=True)
