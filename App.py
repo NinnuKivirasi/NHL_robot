@@ -1,5 +1,3 @@
-from flask import Flask, render_template
-import pandas as pd
 import requests
 import csv
 import pandas as pd
@@ -13,7 +11,7 @@ open("FIN_player_stats.csv", "w").close()
 open("finnish_players.csv", "w").close()
 open("nhl_players_id.csv", "w").close()
 open("player_stats.csv", "w").close()
-open("standings_csv", "w").close()
+open("standings.csv", "w").close()
 
 team_codes = []
 
@@ -128,7 +126,7 @@ def load_players():
 def save_stats_to_csv(stats):
     with open(FIN_stats_csv, "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(["name", "goals", "assists", "points", "saves", "shotsAgainst", "plusMinus", "time_on_ice", "game_date", "team", "opponent"])
+        writer.writerow(["name", "goals", "assists", "points", "plusMinus", "time_on_ice", "game_date", "team", "opponent"])
         for stat in stats:
             writer.writerow(stat)
             
@@ -161,10 +159,49 @@ def main():
 if __name__ == "__main__":
     main()
 
+
 #////////////////// THIRD PART
 
+# CSV Files
+GAME_SCORE_CSV = "game_scores.csv"
+
+# NHL API URLs
+SCORES_URL = "https://api-web.nhle.com/v1/score/now"
+
+
+# Function to fetch and save game scores
+def fetch_game_scores():
+    response = requests.get(SCORES_URL)
+    if response.status_code != 200:
+        print(f"Error fetching game scores! Status code: {response.status_code}")
+        return
+
+    data = response.json()
+    games = []
+
+    for game in data.get("games", []):
+        home_team = game["homeTeam"]["abbrev"]
+        away_team = game["awayTeam"]["abbrev"]
+        home_score = game["homeTeam"].get("score", 0)
+        away_score = game["awayTeam"].get("score", 0)
+        game_status = game.get("gameState", "N/A")  # LIVE, FINAL, PREVIEW
+
+        games.append([away_team, away_score, home_team, home_score, game_status])
+
+    with open(GAME_SCORE_CSV, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Away Team", "Away Score", "Home Team", "Home Score", "Status"])
+        writer.writerows(games)
+
+    print("✅ Game scores saved to CSV.")
+
+fetch_game_scores()
+
+# CSV File
 # CSV File
 STANDINGS_CSV = "standings.csv"
+
+
 
 # NHL API URL
 STANDINGS_URL = "https://api-web.nhle.com/v1/standings/now"

@@ -346,6 +346,7 @@ OTT, R, Michael, Amadio, 8478020, CAN
 OTT, R, Drake, Batherson, 8480208, USA
 OTT, C, Nick, Cousins, 8476393, CAN
 OTT, C, Dylan, Cozens, 8481528, CAN
+OTT, L, Angus, Crookshank, 8481065, CAN
 OTT, R, Adam, Gaudette, 8478874, USA
 OTT, R, Claude, Giroux, 8473512, CAN
 OTT, C, Ridly, Greig, 8482092, CAN
@@ -609,7 +610,6 @@ BOS, R, Fabian, Lysell, 8482763, SWE
 BOS, C, Casey, Mittelstadt, 8479999, USA
 BOS, R, David, Pastrnak, 8477956, CZE
 BOS, C, Pavel, Zacha, 8478401, CZE
-BOS, D, Michael, Callahan, 8480828, USA
 BOS, D, Henri, Jokiharju, 8480035, FIN
 BOS, D, Hampus, Lindholm, 8476854, SWE
 BOS, D, Mason, Lohrei, 8482511, USA
@@ -712,6 +712,7 @@ BUF, D, Bowen, Byram, 8481524, CAN
 BUF, D, Connor, Clifton, 8477365, USA
 BUF, D, Rasmus, Dahlin, 8480839, SWE
 BUF, D, Owen, Power, 8482671, CAN
+BUF, D, Jack, Rathbone, 8480056, USA
 BUF, D, Mattias, Samuelsson, 8480807, USA
 BUF, G, Ukko-Pekka, Luukkonen, 8480045, FIN
 BUF, G, James, Reimer, 8473503, CAN
@@ -728,6 +729,7 @@ NSH, L, Cole, Smith, 8482062, USA
 NSH, C, Steven, Stamkos, 8474564, CAN
 NSH, C, Fedor, Svechkov, 8482768, RUS
 NSH, L, Jakub, Vrana, 8477944, CZE
+NSH, R, Matthew, Wood, 8484241, CAN
 NSH, D, Justin, Barron, 8482111, CAN
 NSH, D, Nick, Blankenburg, 8483565, USA
 NSH, D, Marc, Del Gaizo, 8481743, USA
