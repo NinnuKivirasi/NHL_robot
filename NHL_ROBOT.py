@@ -1,7 +1,5 @@
 import requests
 import csv
-import pandas as pd
-from flask import Flask, render_template
 from datetime import datetime, timedelta
 
 #////////////////// FIRST PART
@@ -256,29 +254,3 @@ def fetch_standings():
 
 # Run the function
 fetch_standings()
-
-
-#////////////////// FOURTH PART
-
-app = Flask(__name__)
-
-# Load CSV files into Pandas DataFrames
-def load_csv(file_path):
-    try:
-        return pd.read_csv(file_path)
-    except FileNotFoundError:
-        return pd.DataFrame()  # Return an empty DataFrame if file is missing
-
-@app.route("/")
-def home():
-    standings_df = load_csv("standings.csv")
-    scores_df = load_csv("game_scores.csv")
-    player_stats_df = load_csv("FIN_player_stats.csv")
-
-    return render_template("index.html", 
-                           standings_table=standings_df.to_html(classes="table table-striped table-bordered", index=False),
-                           scores_table=scores_df.to_html(classes="table table-striped table-bordered", index=False),
-                           player_stats_table=player_stats_df.to_html(classes="table table-striped table-bordered", index=False))
-
-if __name__ == "__main__":
-    app.run(debug=True)
